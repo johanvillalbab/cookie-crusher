@@ -24,13 +24,15 @@
 }
 
 body {
-  width: 340px;
-  min-height: 380px;
+  width: 360px;
+  min-height: 400px;
+  max-height: 580px;
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-y: auto;
 }
 
 .container {
@@ -97,37 +99,158 @@ h1 {
   font-weight: 500;
 }
 
-/* Stats Container */
-.stats-container {
-  display: flex;
-  justify-content: center;
-  padding: 8px 0;
-}
-
-.stat-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 16px 32px;
+/* Cookies Section */
+.cookies-section {
   background: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  overflow: hidden;
   box-shadow: var(--shadow-sm);
 }
 
-.stat-number {
-  font-size: 32px;
-  font-weight: 600;
-  color: var(--accent);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
+.cookies-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  transition: background 0.15s ease;
 }
 
-.stat-label {
-  font-size: 12px;
+.cookies-toggle:hover {
+  background: var(--bg-tertiary);
+}
+
+.toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggle-icon {
+  width: 16px;
+  height: 16px;
   color: var(--text-tertiary);
+  transition: transform 0.2s ease;
+}
+
+.cookies-toggle.expanded .toggle-icon {
+  transform: rotate(180deg);
+}
+
+.cookie-badge {
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.cookies-list-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  border-top: 0 solid var(--border-light);
+}
+
+.cookies-list-container.expanded {
+  max-height: 220px;
+  overflow-y: auto;
+  border-top-width: 1px;
+}
+
+.cookies-list {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cookies-empty {
+  display: none;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.cookies-empty.show {
+  display: block;
+}
+
+/* Individual Cookie Item */
+.cookie-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  gap: 10px;
+  transition: background 0.15s ease;
+}
+
+.cookie-item:hover {
+  background: #ECEAE5;
+}
+
+.cookie-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cookie-name {
+  font-size: 13px;
   font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cookie-value {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+}
+
+.cookie-delete {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  transition: all 0.15s ease;
+}
+
+.cookie-delete:hover {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.cookie-delete svg {
+  width: 16px;
+  height: 16px;
 }
 
 /* Action Buttons */
@@ -251,22 +374,30 @@ h1 {
   to { transform: rotate(360deg); }
 }
 
-/* Subtle hover effect for stat box */
-.stat-box {
-  transition: all 0.2s ease;
+/* Scrollbar styling */
+.cookies-list-container::-webkit-scrollbar {
+  width: 6px;
 }
 
-.stat-box:hover {
-  border-color: var(--accent);
-  box-shadow: var(--shadow-md);
+.cookies-list-container::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* Number animation */
-@keyframes countUp {
-  from { opacity: 0.5; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+.cookies-list-container::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
 }
 
-.stat-number.animate {
-  animation: countUp 0.3s ease;
+.cookies-list-container::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* Delete animation */
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(10px); }
+}
+
+.cookie-item.deleting {
+  animation: fadeOut 0.2s ease forwards;
 }
