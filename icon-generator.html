@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Iconos - Cookie Crusher</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: #FAF9F7;
+      color: #1A1A1A;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    h1 {
+      margin-bottom: 8px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #1A1A1A;
+    }
+    p {
+      margin-bottom: 32px;
+      color: #5D5D5D;
+      font-size: 15px;
+    }
+    .icons-container {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .icon-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      padding: 24px 32px;
+      border-radius: 12px;
+      border: 1px solid #E8E5E0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .icon-box span {
+      color: #5D5D5D;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    canvas {
+      background: transparent;
+      border-radius: 6px;
+    }
+    button {
+      background: #D97757;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    button:hover {
+      background: #C4684A;
+      transform: translateY(-1px);
+    }
+    .instructions {
+      margin-top: 40px;
+      max-width: 460px;
+      text-align: center;
+      color: #5D5D5D;
+      font-size: 14px;
+      line-height: 1.6;
+      background: white;
+      padding: 20px 24px;
+      border-radius: 12px;
+      border: 1px solid #E8E5E0;
+    }
+    .instructions strong {
+      color: #D97757;
+    }
+    code {
+      background: #F5F4EF;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Generador de Iconos</h1>
+  <p>Haz clic en cada botón para descargar el icono</p>
+  
+  <div class="icons-container">
+    <div class="icon-box">
+      <canvas id="icon16" width="16" height="16"></canvas>
+      <span>16×16</span>
+      <button onclick="downloadIcon(16)">Descargar</button>
+    </div>
+    <div class="icon-box">
+      <canvas id="icon32" width="32" height="32"></canvas>
+      <span>32×32</span>
+      <button onclick="downloadIcon(32)">Descargar</button>
+    </div>
+    <div class="icon-box">
+      <canvas id="icon48" width="48" height="48"></canvas>
+      <span>48×48</span>
+      <button onclick="downloadIcon(48)">Descargar</button>
+    </div>
+    <div class="icon-box">
+      <canvas id="icon128" width="128" height="128"></canvas>
+      <span>128×128</span>
+      <button onclick="downloadIcon(128)">Descargar</button>
+    </div>
+  </div>
+
+  <div class="instructions">
+    <p>
+      Después de descargar, mueve los archivos a la carpeta <strong>icons/</strong><br>
+      con los nombres: <code>icon16.png</code>, <code>icon32.png</code>, <code>icon48.png</code>, <code>icon128.png</code>
+    </p>
+  </div>
+
+  <script>
+    const sizes = [16, 32, 48, 128];
+
+    function drawCookie(ctx, size) {
+      const scale = size / 24;
+      ctx.save();
+      ctx.scale(scale, scale);
+
+      // Cookie base
+      ctx.beginPath();
+      ctx.arc(12, 12, 10, 0, Math.PI * 2);
+      ctx.fillStyle = '#D97757';
+      ctx.fill();
+
+      // Chocolate chips
+      const chips = [
+        { x: 8, y: 9, r: 1.5 },
+        { x: 14, y: 8, r: 1.2 },
+        { x: 10, y: 14, r: 1.4 },
+        { x: 16, y: 13, r: 1.1 },
+        { x: 6, y: 13, r: 1 },
+      ];
+
+      chips.forEach(chip => {
+        ctx.beginPath();
+        ctx.arc(chip.x, chip.y, chip.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#B85A3E';
+        ctx.fill();
+      });
+
+      ctx.restore();
+    }
+
+    sizes.forEach(size => {
+      const canvas = document.getElementById(`icon${size}`);
+      const ctx = canvas.getContext('2d');
+      drawCookie(ctx, size);
+    });
+
+    function downloadIcon(size) {
+      const canvas = document.getElementById(`icon${size}`);
+      const link = document.createElement('a');
+      link.download = `icon${size}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
