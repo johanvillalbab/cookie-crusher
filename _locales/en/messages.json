@@ -1,0 +1,604 @@
+{
+  "extensionName": {
+    "message": "Cookie Crusher",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Delete cookies from the current web page with a single click",
+    "description": "Extension description"
+  },
+  "currentSite": {
+    "message": "Current site",
+    "description": "Label for current domain"
+  },
+  "loading": {
+    "message": "Loading...",
+    "description": "Loading text"
+  },
+  "viewCookies": {
+    "message": "View cookies",
+    "description": "Button to expand cookies list"
+  },
+  "noCookies": {
+    "message": "No cookies on this site",
+    "description": "Message when no cookies"
+  },
+  "clearSiteCookies": {
+    "message": "Clear all from site",
+    "description": "Button to clear site cookies"
+  },
+  "clearAllCookies": {
+    "message": "Clear all cookies",
+    "description": "Button to clear all cookies"
+  },
+  "privacySimplified": {
+    "message": "Privacy simplified",
+    "description": "Footer text"
+  },
+  "pageNotCompatible": {
+    "message": "Page not compatible",
+    "description": "When page is not compatible"
+  },
+  "errorLoadingPage": {
+    "message": "Could not load the current page",
+    "description": "Error loading page"
+  },
+  "systemPagesNoAccess": {
+    "message": "System pages do not have accessible cookies",
+    "description": "Message for system pages"
+  },
+  "errorLoadingInfo": {
+    "message": "Error loading information",
+    "description": "Generic loading error"
+  },
+  "errorLoadingCookies": {
+    "message": "Error loading cookies",
+    "description": "Error loading cookies"
+  },
+  "cleaning": {
+    "message": "Cleaning...",
+    "description": "Text while cleaning cookies"
+  },
+  "noCookiesToDelete": {
+    "message": "No cookies to delete",
+    "description": "When no cookies to delete"
+  },
+  "cookieDeleted": {
+    "message": "Cookie \"$NAME$\" deleted",
+    "description": "Cookie deleted message",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "session_id"
+      }
+    }
+  },
+  "cookiesDeleted": {
+    "message": "$COUNT$ cookie$PLURAL$ deleted",
+    "description": "Cookies deleted message",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "5"
+      },
+      "plural": {
+        "content": "$2",
+        "example": "s"
+      }
+    }
+  },
+  "cookiesDeletedTotal": {
+    "message": "$COUNT$ cookie$PLURAL$ deleted in total",
+    "description": "All cookies deleted message",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "25"
+      },
+      "plural": {
+        "content": "$2",
+        "example": "s"
+      }
+    }
+  },
+  "errorDeletingCookies": {
+    "message": "Error deleting cookies",
+    "description": "Error deleting cookies"
+  },
+  "errorDeletingCookie": {
+    "message": "Error deleting cookie",
+    "description": "Error deleting single cookie"
+  },
+  "confirmDeleteAll": {
+    "message": "Delete ALL cookies from ALL sites?\n\nThis will log you out of all websites.",
+    "description": "Confirmation to delete all cookies"
+  },
+  "deleteCookie": {
+    "message": "Delete cookie",
+    "description": "Delete button title"
+  },
+  "expiration": {
+    "message": "Expiration",
+    "description": "Title for expiration date"
+  },
+  "websiteCookie": {
+    "message": "Website cookie",
+    "description": "Default cookie description"
+  },
+  "expirySession": {
+    "message": "Session",
+    "description": "Session cookie"
+  },
+  "expiryExpired": {
+    "message": "Expired",
+    "description": "Expired cookie"
+  },
+  "expiryToday": {
+    "message": "Today",
+    "description": "Expires today"
+  },
+  "expiryTomorrow": {
+    "message": "Tomorrow",
+    "description": "Expires tomorrow"
+  },
+  "expiryDays": {
+    "message": "$DAYS$ days",
+    "description": "Expires in days",
+    "placeholders": {
+      "days": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "expiryWeeks": {
+    "message": "$WEEKS$ wk",
+    "description": "Expires in weeks",
+    "placeholders": {
+      "weeks": {
+        "content": "$1",
+        "example": "2"
+      }
+    }
+  },
+  "expiryMonths": {
+    "message": "$MONTHS$ months",
+    "description": "Expires in months",
+    "placeholders": {
+      "months": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "expiryYears": {
+    "message": "$YEARS$ years",
+    "description": "Expires in years",
+    "placeholders": {
+      "years": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "cookieTypeGoogleAnalytics": {
+    "message": "Google Analytics",
+    "description": "Cookie type"
+  },
+  "cookieTypeGoogleAnalytics4": {
+    "message": "Google Analytics 4",
+    "description": "Cookie type"
+  },
+  "cookieTypeGoogleAnalyticsLegacy": {
+    "message": "Google Analytics (legacy)",
+    "description": "Cookie type"
+  },
+  "cookieTypeFacebookPixel": {
+    "message": "Facebook Pixel",
+    "description": "Cookie type"
+  },
+  "cookieTypeFacebookClickId": {
+    "message": "Facebook Click ID",
+    "description": "Cookie type"
+  },
+  "cookieTypeFacebook": {
+    "message": "Facebook",
+    "description": "Cookie type"
+  },
+  "cookieTypeGoogleAds": {
+    "message": "Google Ads",
+    "description": "Cookie type"
+  },
+  "cookieTypeGoogleDoubleClick": {
+    "message": "Google DoubleClick",
+    "description": "Cookie type"
+  },
+  "cookieTypeGoogle": {
+    "message": "Google",
+    "description": "Cookie type"
+  },
+  "cookieTypeGoogleAdSense": {
+    "message": "Google AdSense",
+    "description": "Cookie type"
+  },
+  "cookieTypeBingAds": {
+    "message": "Microsoft Bing Ads",
+    "description": "Cookie type"
+  },
+  "cookieTypeSession": {
+    "message": "Session",
+    "description": "Cookie type"
+  },
+  "cookieTypeSessionPHP": {
+    "message": "PHP Session",
+    "description": "Cookie type"
+  },
+  "cookieTypeSessionJava": {
+    "message": "Java Session",
+    "description": "Cookie type"
+  },
+  "cookieTypeSessionNET": {
+    "message": ".NET Session",
+    "description": "Cookie type"
+  },
+  "cookieTypeSessionNodeJS": {
+    "message": "Node.js Session",
+    "description": "Cookie type"
+  },
+  "cookieTypeAuth": {
+    "message": "Authentication",
+    "description": "Cookie type"
+  },
+  "cookieTypeAuthJWT": {
+    "message": "JWT Authentication",
+    "description": "Cookie type"
+  },
+  "cookieTypePreference": {
+    "message": "Preference",
+    "description": "Cookie type"
+  },
+  "cookieTypeConsent": {
+    "message": "Consent",
+    "description": "Cookie type"
+  },
+  "cookieTypeConsentGDPR": {
+    "message": "GDPR Consent",
+    "description": "Cookie type"
+  },
+  "cookieTypeConsentEU": {
+    "message": "EU Consent",
+    "description": "Cookie type"
+  },
+  "cookieTypeOneTrust": {
+    "message": "OneTrust",
+    "description": "Cookie type"
+  },
+  "cookieTypeCart": {
+    "message": "Cart",
+    "description": "Cookie type"
+  },
+  "cookieTypeWishlist": {
+    "message": "Wishlist",
+    "description": "Cookie type"
+  },
+  "cookieTypeCloudflare": {
+    "message": "Cloudflare",
+    "description": "Cookie type"
+  },
+  "cookieTypeSecurity": {
+    "message": "Security",
+    "description": "Cookie type"
+  },
+  "cookieTypeSegment": {
+    "message": "Segment",
+    "description": "Cookie type"
+  },
+  "cookieTypeHotjar": {
+    "message": "Hotjar",
+    "description": "Cookie type"
+  },
+  "cookieTypeIntercom": {
+    "message": "Intercom",
+    "description": "Cookie type"
+  },
+  "cookieTypeMixpanel": {
+    "message": "Mixpanel",
+    "description": "Cookie type"
+  },
+  "cookieTypeAmplitude": {
+    "message": "Amplitude",
+    "description": "Cookie type"
+  },
+  "cookieTypeStripe": {
+    "message": "Stripe",
+    "description": "Cookie type"
+  },
+  "cookieTypeCrispChat": {
+    "message": "Crisp Chat",
+    "description": "Cookie type"
+  },
+  "cookieTypeHubSpot": {
+    "message": "HubSpot",
+    "description": "Cookie type"
+  },
+  "cookieTypeTechnical": {
+    "message": "Technical",
+    "description": "Cookie type"
+  },
+  "cookieTypeAnalytics": {
+    "message": "Analytics",
+    "description": "Cookie type"
+  },
+  "cookieTypeAdvertising": {
+    "message": "Advertising",
+    "description": "Cookie type"
+  },
+  "cookieInfoGaUser": {
+    "message": "Unique user identifier for statistics",
+    "description": "Cookie info"
+  },
+  "cookieInfoGaSession": {
+    "message": "Session identifier (24h)",
+    "description": "Cookie info"
+  },
+  "cookieInfoGaThrottle": {
+    "message": "Limits request rate",
+    "description": "Cookie info"
+  },
+  "cookieInfoGa4": {
+    "message": "Session state and metrics",
+    "description": "Cookie info"
+  },
+  "cookieInfoUtma": {
+    "message": "Unique visitor identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoUtmb": {
+    "message": "User's current session",
+    "description": "Cookie info"
+  },
+  "cookieInfoUtmc": {
+    "message": "Interoperability with urchin.js",
+    "description": "Cookie info"
+  },
+  "cookieInfoUtmz": {
+    "message": "Traffic source and navigation",
+    "description": "Cookie info"
+  },
+  "cookieInfoFbPixel": {
+    "message": "Conversion and ad tracking",
+    "description": "Cookie info"
+  },
+  "cookieInfoFbClick": {
+    "message": "Ad click attribution",
+    "description": "Cookie info"
+  },
+  "cookieInfoFbAds": {
+    "message": "Advertising and cross-site tracking",
+    "description": "Cookie info"
+  },
+  "cookieInfoGclAu": {
+    "message": "Ad link conversion",
+    "description": "Cookie info"
+  },
+  "cookieInfoDoubleClick": {
+    "message": "Personalized advertising",
+    "description": "Cookie info"
+  },
+  "cookieInfoNid": {
+    "message": "Preferences and advertising",
+    "description": "Cookie info"
+  },
+  "cookieInfoAdSense": {
+    "message": "Ad interaction measurement",
+    "description": "Cookie info"
+  },
+  "cookieInfoBingSession": {
+    "message": "Session tracking",
+    "description": "Cookie info"
+  },
+  "cookieInfoBingVisitor": {
+    "message": "Cross-session tracking",
+    "description": "Cookie info"
+  },
+  "cookieInfoSessionData": {
+    "message": "Your current session data",
+    "description": "Cookie info"
+  },
+  "cookieInfoSessionId": {
+    "message": "Session identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoSessionServer": {
+    "message": "Server session identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoSessionExpress": {
+    "message": "Express session identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoAuthStatus": {
+    "message": "Login status",
+    "description": "Cookie info"
+  },
+  "cookieInfoAuthToken": {
+    "message": "Access token",
+    "description": "Cookie info"
+  },
+  "cookieInfoOAuthToken": {
+    "message": "OAuth access token",
+    "description": "Cookie info"
+  },
+  "cookieInfoRefreshToken": {
+    "message": "Session renewal token",
+    "description": "Cookie info"
+  },
+  "cookieInfoJWT": {
+    "message": "JSON Web Token",
+    "description": "Cookie info"
+  },
+  "cookieInfoRememberMe": {
+    "message": "Keep session active",
+    "description": "Cookie info"
+  },
+  "cookieInfoLoginStatus": {
+    "message": "Login status",
+    "description": "Cookie info"
+  },
+  "cookieInfoLanguage": {
+    "message": "Selected language",
+    "description": "Cookie info"
+  },
+  "cookieInfoLocale": {
+    "message": "Regional settings",
+    "description": "Cookie info"
+  },
+  "cookieInfoTheme": {
+    "message": "Visual theme (light/dark)",
+    "description": "Cookie info"
+  },
+  "cookieInfoDarkMode": {
+    "message": "Dark mode enabled",
+    "description": "Cookie info"
+  },
+  "cookieInfoTimezone": {
+    "message": "User timezone",
+    "description": "Cookie info"
+  },
+  "cookieInfoCurrency": {
+    "message": "Selected currency",
+    "description": "Cookie info"
+  },
+  "cookieInfoCookieConsent": {
+    "message": "Cookie acceptance",
+    "description": "Cookie info"
+  },
+  "cookieInfoGdpr": {
+    "message": "Privacy preferences",
+    "description": "Cookie info"
+  },
+  "cookieInfoTcf": {
+    "message": "TCF preferences",
+    "description": "Cookie info"
+  },
+  "cookieInfoOneTrust": {
+    "message": "Cookie preferences",
+    "description": "Cookie info"
+  },
+  "cookieInfoCart": {
+    "message": "Products in your cart",
+    "description": "Cookie info"
+  },
+  "cookieInfoCartId": {
+    "message": "Cart identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoWishlist": {
+    "message": "Saved products",
+    "description": "Cookie info"
+  },
+  "cookieInfoCfBot": {
+    "message": "Bot protection",
+    "description": "Cookie info"
+  },
+  "cookieInfoCfClearance": {
+    "message": "Security verification completed",
+    "description": "Cookie info"
+  },
+  "cookieInfoCfLoadBalance": {
+    "message": "Load balancing",
+    "description": "Cookie info"
+  },
+  "cookieInfoCsrf": {
+    "message": "CSRF attack protection",
+    "description": "Cookie info"
+  },
+  "cookieInfoCsrfToken": {
+    "message": "Anti-forgery token",
+    "description": "Cookie info"
+  },
+  "cookieInfoSegmentAnon": {
+    "message": "Anonymous analytics identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoSegmentUser": {
+    "message": "User identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoHotjarUser": {
+    "message": "Unique user identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoHotjarSession": {
+    "message": "Session data",
+    "description": "Cookie info"
+  },
+  "cookieInfoIntercom": {
+    "message": "Chat identifier",
+    "description": "Cookie info"
+  },
+  "cookieInfoMixpanel": {
+    "message": "Product analytics",
+    "description": "Cookie info"
+  },
+  "cookieInfoStripe": {
+    "message": "Payment fraud prevention",
+    "description": "Cookie info"
+  },
+  "cookieInfoHubspotTracking": {
+    "message": "Visitor tracking",
+    "description": "Cookie info"
+  },
+  "cookieInfoHubspotSession": {
+    "message": "Session tracking",
+    "description": "Cookie info"
+  },
+  "cookieInfoHubspotNew": {
+    "message": "New session started",
+    "description": "Cookie info"
+  },
+  "cookieInfoHubspotMain": {
+    "message": "Main tracking",
+    "description": "Cookie info"
+  },
+  "cookieInfoSessionSite": {
+    "message": "Site session data",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoAuthData": {
+    "message": "Login data",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoCartData": {
+    "message": "Shopping data",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoPrivacyPrefs": {
+    "message": "Privacy preferences",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoLangConfig": {
+    "message": "Language configuration",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoVisualConfig": {
+    "message": "Visual configuration",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoAntiForge": {
+    "message": "Anti-forgery protection",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoUsageTracking": {
+    "message": "Usage tracking",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoAdTracking": {
+    "message": "Ad tracking",
+    "description": "Inferred cookie info"
+  },
+  "cookieInfoSystemCookie": {
+    "message": "System cookie",
+    "description": "Inferred cookie info"
+  }
+}

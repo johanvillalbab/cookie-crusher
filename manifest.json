@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Cookie Crusher",
+  "name": "__MSG_extensionName__",
   "version": "1.0.0",
-  "description": "Elimina las cookies de la página web actual con un solo clic",
+  "description": "__MSG_extensionDescription__",
+  "default_locale": "es",
   "permissions": [
     "cookies",
     "activeTab",

@@ -1,3 +1,16 @@
+// Función de internacionalización
+function i18n(key, substitutions = []) {
+  return chrome.i18n.getMessage(key, substitutions) || key;
+}
+
+// Aplicar traducciones a elementos con data-i18n
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    element.textContent = i18n(key);
+  });
+}
+
 // Elementos del DOM
 const domainElement = document.getElementById('current-domain');
 const cookieCountElement = document.getElementById('cookie-count');
@@ -13,114 +26,117 @@ let currentDomain = '';
 let currentUrl = '';
 let currentCookies = [];
 
-// Base de datos de cookies conocidas con descripciones
+// Base de datos de cookies conocidas con descripciones (usando claves i18n)
 const cookieDatabase = {
   // Google Analytics
-  '_ga': { desc: 'Google Analytics', info: 'Identificador único de usuario para estadísticas' },
-  '_gid': { desc: 'Google Analytics', info: 'Identificador de sesión (24h)' },
-  '_gat': { desc: 'Google Analytics', info: 'Limita la tasa de solicitudes' },
-  '_ga_': { desc: 'Google Analytics 4', info: 'Estado de sesión y métricas', partial: true },
-  '__utma': { desc: 'Google Analytics (legacy)', info: 'Identificador de visitante único' },
-  '__utmb': { desc: 'Google Analytics (legacy)', info: 'Sesión actual del usuario' },
-  '__utmc': { desc: 'Google Analytics (legacy)', info: 'Interoperabilidad con urchin.js' },
-  '__utmz': { desc: 'Google Analytics (legacy)', info: 'Fuente de tráfico y navegación' },
+  '_ga': { descKey: 'cookieTypeGoogleAnalytics', infoKey: 'cookieInfoGaUser' },
+  '_gid': { descKey: 'cookieTypeGoogleAnalytics', infoKey: 'cookieInfoGaSession' },
+  '_gat': { descKey: 'cookieTypeGoogleAnalytics', infoKey: 'cookieInfoGaThrottle' },
+  '_ga_': { descKey: 'cookieTypeGoogleAnalytics4', infoKey: 'cookieInfoGa4', partial: true },
+  '__utma': { descKey: 'cookieTypeGoogleAnalyticsLegacy', infoKey: 'cookieInfoUtma' },
+  '__utmb': { descKey: 'cookieTypeGoogleAnalyticsLegacy', infoKey: 'cookieInfoUtmb' },
+  '__utmc': { descKey: 'cookieTypeGoogleAnalyticsLegacy', infoKey: 'cookieInfoUtmc' },
+  '__utmz': { descKey: 'cookieTypeGoogleAnalyticsLegacy', infoKey: 'cookieInfoUtmz' },
   
   // Facebook
-  '_fbp': { desc: 'Facebook Pixel', info: 'Seguimiento de conversiones y anuncios' },
-  '_fbc': { desc: 'Facebook Click ID', info: 'Atribución de clics en anuncios' },
-  'fr': { desc: 'Facebook', info: 'Publicidad y seguimiento entre sitios' },
+  '_fbp': { descKey: 'cookieTypeFacebookPixel', infoKey: 'cookieInfoFbPixel' },
+  '_fbc': { descKey: 'cookieTypeFacebookClickId', infoKey: 'cookieInfoFbClick' },
+  'fr': { descKey: 'cookieTypeFacebook', infoKey: 'cookieInfoFbAds' },
   
   // Advertising & Tracking
-  '_gcl_au': { desc: 'Google Ads', info: 'Conversión de enlaces de anuncios' },
-  'IDE': { desc: 'Google DoubleClick', info: 'Publicidad personalizada' },
-  'NID': { desc: 'Google', info: 'Preferencias y publicidad' },
-  '__gads': { desc: 'Google AdSense', info: 'Medición de interacción con anuncios' },
-  '_uetsid': { desc: 'Microsoft Bing Ads', info: 'Seguimiento de sesión' },
-  '_uetvid': { desc: 'Microsoft Bing Ads', info: 'Seguimiento entre sesiones' },
+  '_gcl_au': { descKey: 'cookieTypeGoogleAds', infoKey: 'cookieInfoGclAu' },
+  'IDE': { descKey: 'cookieTypeGoogleDoubleClick', infoKey: 'cookieInfoDoubleClick' },
+  'NID': { descKey: 'cookieTypeGoogle', infoKey: 'cookieInfoNid' },
+  '__gads': { descKey: 'cookieTypeGoogleAdSense', infoKey: 'cookieInfoAdSense' },
+  '_uetsid': { descKey: 'cookieTypeBingAds', infoKey: 'cookieInfoBingSession' },
+  '_uetvid': { descKey: 'cookieTypeBingAds', infoKey: 'cookieInfoBingVisitor' },
   
   // Session & Auth
-  'session': { desc: 'Sesión', info: 'Datos de tu sesión actual' },
-  'sessionid': { desc: 'Sesión', info: 'Identificador de sesión' },
-  'session_id': { desc: 'Sesión', info: 'Identificador de sesión' },
-  'PHPSESSID': { desc: 'Sesión PHP', info: 'Identificador de sesión del servidor' },
-  'JSESSIONID': { desc: 'Sesión Java', info: 'Identificador de sesión del servidor' },
-  'ASP.NET_SessionId': { desc: 'Sesión .NET', info: 'Identificador de sesión del servidor' },
-  'connect.sid': { desc: 'Sesión Node.js', info: 'Identificador de sesión Express' },
-  'auth': { desc: 'Autenticación', info: 'Estado de inicio de sesión' },
-  'auth_token': { desc: 'Autenticación', info: 'Token de acceso' },
-  'access_token': { desc: 'Autenticación', info: 'Token de acceso OAuth' },
-  'refresh_token': { desc: 'Autenticación', info: 'Token para renovar sesión' },
-  'token': { desc: 'Autenticación', info: 'Token de acceso' },
-  'jwt': { desc: 'Autenticación JWT', info: 'JSON Web Token' },
-  'remember_me': { desc: 'Autenticación', info: 'Mantener sesión iniciada' },
-  'logged_in': { desc: 'Autenticación', info: 'Estado de login' },
+  'session': { descKey: 'cookieTypeSession', infoKey: 'cookieInfoSessionData' },
+  'sessionid': { descKey: 'cookieTypeSession', infoKey: 'cookieInfoSessionId' },
+  'session_id': { descKey: 'cookieTypeSession', infoKey: 'cookieInfoSessionId' },
+  'PHPSESSID': { descKey: 'cookieTypeSessionPHP', infoKey: 'cookieInfoSessionServer' },
+  'JSESSIONID': { descKey: 'cookieTypeSessionJava', infoKey: 'cookieInfoSessionServer' },
+  'ASP.NET_SessionId': { descKey: 'cookieTypeSessionNET', infoKey: 'cookieInfoSessionServer' },
+  'connect.sid': { descKey: 'cookieTypeSessionNodeJS', infoKey: 'cookieInfoSessionExpress' },
+  'auth': { descKey: 'cookieTypeAuth', infoKey: 'cookieInfoAuthStatus' },
+  'auth_token': { descKey: 'cookieTypeAuth', infoKey: 'cookieInfoAuthToken' },
+  'access_token': { descKey: 'cookieTypeAuth', infoKey: 'cookieInfoOAuthToken' },
+  'refresh_token': { descKey: 'cookieTypeAuth', infoKey: 'cookieInfoRefreshToken' },
+  'token': { descKey: 'cookieTypeAuth', infoKey: 'cookieInfoAuthToken' },
+  'jwt': { descKey: 'cookieTypeAuthJWT', infoKey: 'cookieInfoJWT' },
+  'remember_me': { descKey: 'cookieTypeAuth', infoKey: 'cookieInfoRememberMe' },
+  'logged_in': { descKey: 'cookieTypeAuth', infoKey: 'cookieInfoLoginStatus' },
   
   // Preferences
-  'lang': { desc: 'Preferencia', info: 'Idioma seleccionado' },
-  'language': { desc: 'Preferencia', info: 'Idioma seleccionado' },
-  'locale': { desc: 'Preferencia', info: 'Configuración regional' },
-  'theme': { desc: 'Preferencia', info: 'Tema visual (claro/oscuro)' },
-  'dark_mode': { desc: 'Preferencia', info: 'Modo oscuro activado' },
-  'timezone': { desc: 'Preferencia', info: 'Zona horaria del usuario' },
-  'currency': { desc: 'Preferencia', info: 'Moneda seleccionada' },
+  'lang': { descKey: 'cookieTypePreference', infoKey: 'cookieInfoLanguage' },
+  'language': { descKey: 'cookieTypePreference', infoKey: 'cookieInfoLanguage' },
+  'locale': { descKey: 'cookieTypePreference', infoKey: 'cookieInfoLocale' },
+  'theme': { descKey: 'cookieTypePreference', infoKey: 'cookieInfoTheme' },
+  'dark_mode': { descKey: 'cookieTypePreference', infoKey: 'cookieInfoDarkMode' },
+  'timezone': { descKey: 'cookieTypePreference', infoKey: 'cookieInfoTimezone' },
+  'currency': { descKey: 'cookieTypePreference', infoKey: 'cookieInfoCurrency' },
   
   // Consent & Privacy
-  'cookieconsent': { desc: 'Consentimiento', info: 'Aceptación de cookies' },
-  'cookie_consent': { desc: 'Consentimiento', info: 'Aceptación de cookies' },
-  'gdpr': { desc: 'Consentimiento GDPR', info: 'Preferencias de privacidad' },
-  'euconsent': { desc: 'Consentimiento EU', info: 'Preferencias TCF' },
-  'OptanonConsent': { desc: 'OneTrust', info: 'Preferencias de cookies' },
-  'CookieConsent': { desc: 'Consentimiento', info: 'Preferencias de cookies' },
+  'cookieconsent': { descKey: 'cookieTypeConsent', infoKey: 'cookieInfoCookieConsent' },
+  'cookie_consent': { descKey: 'cookieTypeConsent', infoKey: 'cookieInfoCookieConsent' },
+  'gdpr': { descKey: 'cookieTypeConsentGDPR', infoKey: 'cookieInfoGdpr' },
+  'euconsent': { descKey: 'cookieTypeConsentEU', infoKey: 'cookieInfoTcf' },
+  'OptanonConsent': { descKey: 'cookieTypeOneTrust', infoKey: 'cookieInfoOneTrust' },
+  'CookieConsent': { descKey: 'cookieTypeConsent', infoKey: 'cookieInfoOneTrust' },
   
   // E-commerce
-  'cart': { desc: 'Carrito', info: 'Productos en tu carrito' },
-  'cart_id': { desc: 'Carrito', info: 'Identificador del carrito' },
-  'wishlist': { desc: 'Lista de deseos', info: 'Productos guardados' },
+  'cart': { descKey: 'cookieTypeCart', infoKey: 'cookieInfoCart' },
+  'cart_id': { descKey: 'cookieTypeCart', infoKey: 'cookieInfoCartId' },
+  'wishlist': { descKey: 'cookieTypeWishlist', infoKey: 'cookieInfoWishlist' },
   
   // Cloudflare
-  '__cf_bm': { desc: 'Cloudflare', info: 'Protección contra bots' },
-  'cf_clearance': { desc: 'Cloudflare', info: 'Verificación de seguridad completada' },
-  '__cflb': { desc: 'Cloudflare', info: 'Balance de carga' },
+  '__cf_bm': { descKey: 'cookieTypeCloudflare', infoKey: 'cookieInfoCfBot' },
+  'cf_clearance': { descKey: 'cookieTypeCloudflare', infoKey: 'cookieInfoCfClearance' },
+  '__cflb': { descKey: 'cookieTypeCloudflare', infoKey: 'cookieInfoCfLoadBalance' },
   
   // Other common
-  'csrf': { desc: 'Seguridad', info: 'Protección contra ataques CSRF' },
-  'csrf_token': { desc: 'Seguridad', info: 'Token anti-falsificación' },
-  '_csrf': { desc: 'Seguridad', info: 'Token anti-falsificación' },
-  'XSRF-TOKEN': { desc: 'Seguridad', info: 'Token anti-falsificación' },
-  'ajs_anonymous_id': { desc: 'Segment', info: 'Identificador anónimo de analytics' },
-  'ajs_user_id': { desc: 'Segment', info: 'Identificador de usuario' },
-  '_hjid': { desc: 'Hotjar', info: 'Identificador único de usuario' },
-  '_hjSessionUser': { desc: 'Hotjar', info: 'Datos de sesión', partial: true },
-  'intercom-id': { desc: 'Intercom', info: 'Identificador de chat', partial: true },
-  'mp_': { desc: 'Mixpanel', info: 'Analytics de producto', partial: true },
-  'amplitude_id': { desc: 'Amplitude', info: 'Analytics de producto', partial: true },
-  '__stripe': { desc: 'Stripe', info: 'Prevención de fraude en pagos', partial: true },
-  'crisp-client': { desc: 'Crisp Chat', info: 'Identificador de chat', partial: true },
-  'hubspotutk': { desc: 'HubSpot', info: 'Seguimiento de visitantes' },
-  '__hssc': { desc: 'HubSpot', info: 'Seguimiento de sesión' },
-  '__hssrc': { desc: 'HubSpot', info: 'Nueva sesión iniciada' },
-  '__hstc': { desc: 'HubSpot', info: 'Seguimiento principal' },
+  'csrf': { descKey: 'cookieTypeSecurity', infoKey: 'cookieInfoCsrf' },
+  'csrf_token': { descKey: 'cookieTypeSecurity', infoKey: 'cookieInfoCsrfToken' },
+  '_csrf': { descKey: 'cookieTypeSecurity', infoKey: 'cookieInfoCsrfToken' },
+  'XSRF-TOKEN': { descKey: 'cookieTypeSecurity', infoKey: 'cookieInfoCsrfToken' },
+  'ajs_anonymous_id': { descKey: 'cookieTypeSegment', infoKey: 'cookieInfoSegmentAnon' },
+  'ajs_user_id': { descKey: 'cookieTypeSegment', infoKey: 'cookieInfoSegmentUser' },
+  '_hjid': { descKey: 'cookieTypeHotjar', infoKey: 'cookieInfoHotjarUser' },
+  '_hjSessionUser': { descKey: 'cookieTypeHotjar', infoKey: 'cookieInfoHotjarSession', partial: true },
+  'intercom-id': { descKey: 'cookieTypeIntercom', infoKey: 'cookieInfoIntercom', partial: true },
+  'mp_': { descKey: 'cookieTypeMixpanel', infoKey: 'cookieInfoMixpanel', partial: true },
+  'amplitude_id': { descKey: 'cookieTypeAmplitude', infoKey: 'cookieInfoMixpanel', partial: true },
+  '__stripe': { descKey: 'cookieTypeStripe', infoKey: 'cookieInfoStripe', partial: true },
+  'crisp-client': { descKey: 'cookieTypeCrispChat', infoKey: 'cookieInfoIntercom', partial: true },
+  'hubspotutk': { descKey: 'cookieTypeHubSpot', infoKey: 'cookieInfoHubspotTracking' },
+  '__hssc': { descKey: 'cookieTypeHubSpot', infoKey: 'cookieInfoHubspotSession' },
+  '__hssrc': { descKey: 'cookieTypeHubSpot', infoKey: 'cookieInfoHubspotNew' },
+  '__hstc': { descKey: 'cookieTypeHubSpot', infoKey: 'cookieInfoHubspotMain' },
 };
 
 // Inicialización
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+  applyTranslations();
+  init();
+});
 
 async function init() {
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
     
     if (!tab || !tab.url) {
-      showStatus('No se pudo obtener la página actual', 'error');
+      showStatus(i18n('errorLoadingPage'), 'error');
       return;
     }
 
     currentUrl = tab.url;
     
     if (!isValidUrl(currentUrl)) {
-      domainElement.textContent = 'Página no compatible';
+      domainElement.textContent = i18n('pageNotCompatible');
       cookieCountElement.textContent = '0';
       clearDomainBtn.disabled = true;
-      showStatus('Las páginas del sistema no tienen cookies accesibles', 'warning');
+      showStatus(i18n('systemPagesNoAccess'), 'warning');
       return;
     }
 
@@ -132,7 +148,7 @@ async function init() {
 
   } catch (error) {
     console.error('Error al inicializar:', error);
-    showStatus('Error al cargar la información', 'error');
+    showStatus(i18n('errorLoadingInfo'), 'error');
   }
 }
 
@@ -144,47 +160,54 @@ function isValidUrl(url) {
 function getCookieInfo(cookieName) {
   // Buscar coincidencia exacta
   if (cookieDatabase[cookieName]) {
-    return cookieDatabase[cookieName];
+    const entry = cookieDatabase[cookieName];
+    return {
+      desc: i18n(entry.descKey),
+      info: i18n(entry.infoKey)
+    };
   }
   
   // Buscar coincidencias parciales (para cookies con prefijos)
   const lowerName = cookieName.toLowerCase();
   for (const [key, value] of Object.entries(cookieDatabase)) {
     if (value.partial && lowerName.startsWith(key.toLowerCase())) {
-      return value;
+      return {
+        desc: i18n(value.descKey),
+        info: i18n(value.infoKey)
+      };
     }
   }
   
   // Inferir tipo basado en patrones comunes
   if (lowerName.includes('session') || lowerName.includes('sess')) {
-    return { desc: 'Sesión', info: 'Datos de sesión del sitio' };
+    return { desc: i18n('cookieTypeSession'), info: i18n('cookieInfoSessionSite') };
   }
   if (lowerName.includes('auth') || lowerName.includes('login') || lowerName.includes('token')) {
-    return { desc: 'Autenticación', info: 'Datos de inicio de sesión' };
+    return { desc: i18n('cookieTypeAuth'), info: i18n('cookieInfoAuthData') };
   }
   if (lowerName.includes('cart') || lowerName.includes('basket')) {
-    return { desc: 'Carrito', info: 'Datos de compra' };
+    return { desc: i18n('cookieTypeCart'), info: i18n('cookieInfoCartData') };
   }
   if (lowerName.includes('consent') || lowerName.includes('gdpr') || lowerName.includes('cookie')) {
-    return { desc: 'Consentimiento', info: 'Preferencias de privacidad' };
+    return { desc: i18n('cookieTypeConsent'), info: i18n('cookieInfoPrivacyPrefs') };
   }
   if (lowerName.includes('lang') || lowerName.includes('locale') || lowerName.includes('i18n')) {
-    return { desc: 'Preferencia', info: 'Configuración de idioma' };
+    return { desc: i18n('cookieTypePreference'), info: i18n('cookieInfoLangConfig') };
   }
   if (lowerName.includes('theme') || lowerName.includes('dark') || lowerName.includes('mode')) {
-    return { desc: 'Preferencia', info: 'Configuración visual' };
+    return { desc: i18n('cookieTypePreference'), info: i18n('cookieInfoVisualConfig') };
   }
   if (lowerName.includes('csrf') || lowerName.includes('xsrf')) {
-    return { desc: 'Seguridad', info: 'Protección anti-falsificación' };
+    return { desc: i18n('cookieTypeSecurity'), info: i18n('cookieInfoAntiForge') };
   }
   if (lowerName.includes('track') || lowerName.includes('analytics') || lowerName.includes('_ga')) {
-    return { desc: 'Analytics', info: 'Seguimiento de uso' };
+    return { desc: i18n('cookieTypeAnalytics'), info: i18n('cookieInfoUsageTracking') };
   }
   if (lowerName.includes('ad') || lowerName.includes('promo') || lowerName.includes('campaign')) {
-    return { desc: 'Publicidad', info: 'Seguimiento de anuncios' };
+    return { desc: i18n('cookieTypeAdvertising'), info: i18n('cookieInfoAdTracking') };
   }
   if (lowerName.startsWith('_') || lowerName.startsWith('__')) {
-    return { desc: 'Técnica', info: 'Cookie del sistema' };
+    return { desc: i18n('cookieTypeTechnical'), info: i18n('cookieInfoSystemCookie') };
   }
   
   return null;
@@ -193,20 +216,20 @@ function getCookieInfo(cookieName) {
 // Formatear fecha de expiración
 function formatExpiry(cookie) {
   if (cookie.session) {
-    return 'Sesión';
+    return i18n('expirySession');
   }
   if (cookie.expirationDate) {
     const date = new Date(cookie.expirationDate * 1000);
     const now = new Date();
     const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
     
-    if (diffDays < 0) return 'Expirada';
-    if (diffDays === 0) return 'Hoy';
-    if (diffDays === 1) return 'Mañana';
-    if (diffDays < 7) return `${diffDays} días`;
-    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} sem`;
-    if (diffDays < 365) return `${Math.ceil(diffDays / 30)} meses`;
-    return `${Math.ceil(diffDays / 365)} años`;
+    if (diffDays < 0) return i18n('expiryExpired');
+    if (diffDays === 0) return i18n('expiryToday');
+    if (diffDays === 1) return i18n('expiryTomorrow');
+    if (diffDays < 7) return i18n('expiryDays', [diffDays.toString()]);
+    if (diffDays < 30) return i18n('expiryWeeks', [Math.ceil(diffDays / 7).toString()]);
+    if (diffDays < 365) return i18n('expiryMonths', [Math.ceil(diffDays / 30).toString()]);
+    return i18n('expiryYears', [Math.ceil(diffDays / 365).toString()]);
   }
   return '—';
 }
@@ -258,13 +281,13 @@ function renderCookiesList() {
           <span class="cookie-name" title="${escapeHtml(cookie.name)}">${escapeHtml(cookie.name)}</span>
           ${cookieInfo ? `<span class="cookie-type">${cookieInfo.desc}</span>` : ''}
         </div>
-        <span class="cookie-description">${cookieInfo ? cookieInfo.info : 'Cookie del sitio web'}</span>
+        <span class="cookie-description">${cookieInfo ? cookieInfo.info : i18n('websiteCookie')}</span>
         <div class="cookie-meta">
-          <span class="cookie-expiry" title="Expiración">${expiry}</span>
+          <span class="cookie-expiry" title="${i18n('expiration')}">${expiry}</span>
           ${tags.length > 0 ? `<span class="cookie-tags">${tags.join(' ')}</span>` : ''}
         </div>
       </div>
-      <button class="cookie-delete" title="Eliminar cookie" data-name="${escapeHtml(cookie.name)}" data-domain="${escapeHtml(cookie.domain)}" data-path="${escapeHtml(cookie.path)}" data-secure="${cookie.secure}">
+      <button class="cookie-delete" title="${i18n('deleteCookie')}" data-name="${escapeHtml(cookie.name)}" data-domain="${escapeHtml(cookie.domain)}" data-path="${escapeHtml(cookie.path)}" data-secure="${cookie.secure}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"/>
           <line x1="6" y1="6" x2="18" y2="18"/>
@@ -309,13 +332,13 @@ async function handleDeleteCookie(e) {
     // Esperar a que termine la animación
     setTimeout(async () => {
       await loadCookies();
-      showStatus(`Cookie "${name}" eliminada`, 'success');
+      showStatus(i18n('cookieDeleted', [name]), 'success');
     }, 200);
     
   } catch (error) {
     console.error('Error al eliminar cookie:', error);
     cookieItem.classList.remove('deleting');
-    showStatus('Error al eliminar la cookie', 'error');
+    showStatus(i18n('errorDeletingCookie'), 'error');
   }
 }
 
@@ -335,14 +358,14 @@ clearDomainBtn.addEventListener('click', async () => {
     <svg class="loading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="12" cy="12" r="10"/>
     </svg>
-    Limpiando...
+    ${i18n('cleaning')}
   `;
 
   try {
     const cookies = await chrome.cookies.getAll({ domain: currentDomain });
     
     if (cookies.length === 0) {
-      showStatus('No hay cookies para eliminar', 'warning');
+      showStatus(i18n('noCookiesToDelete'), 'warning');
       clearDomainBtn.innerHTML = originalContent;
       clearDomainBtn.disabled = false;
       return;
@@ -363,11 +386,12 @@ clearDomainBtn.addEventListener('click', async () => {
     }
 
     await loadCookies();
-    showStatus(`${deletedCount} cookie${deletedCount !== 1 ? 's' : ''} eliminada${deletedCount !== 1 ? 's' : ''}`, 'success');
+    const plural = deletedCount !== 1 ? 's' : '';
+    showStatus(i18n('cookiesDeleted', [deletedCount.toString(), plural]), 'success');
 
   } catch (error) {
     console.error('Error:', error);
-    showStatus('Error al eliminar cookies', 'error');
+    showStatus(i18n('errorDeletingCookies'), 'error');
   }
 
   clearDomainBtn.innerHTML = originalContent;
@@ -376,7 +400,7 @@ clearDomainBtn.addEventListener('click', async () => {
 
 // Limpiar TODAS las cookies
 clearAllBtn.addEventListener('click', async () => {
-  if (!confirm('¿Eliminar TODAS las cookies de TODOS los sitios?\n\nEsto cerrará tu sesión en todos los sitios web.')) {
+  if (!confirm(i18n('confirmDeleteAll'))) {
     return;
   }
 
@@ -386,14 +410,14 @@ clearAllBtn.addEventListener('click', async () => {
     <svg class="loading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="12" cy="12" r="10"/>
     </svg>
-    Limpiando...
+    ${i18n('cleaning')}
   `;
 
   try {
     const allCookies = await chrome.cookies.getAll({});
     
     if (allCookies.length === 0) {
-      showStatus('No hay cookies para eliminar', 'warning');
+      showStatus(i18n('noCookiesToDelete'), 'warning');
       clearAllBtn.innerHTML = originalContent;
       clearAllBtn.disabled = false;
       return;
@@ -414,11 +438,12 @@ clearAllBtn.addEventListener('click', async () => {
     }
 
     await loadCookies();
-    showStatus(`${deletedCount} cookie${deletedCount !== 1 ? 's' : ''} eliminada${deletedCount !== 1 ? 's' : ''} en total`, 'success');
+    const plural = deletedCount !== 1 ? 's' : '';
+    showStatus(i18n('cookiesDeletedTotal', [deletedCount.toString(), plural]), 'success');
 
   } catch (error) {
     console.error('Error:', error);
-    showStatus('Error al eliminar cookies', 'error');
+    showStatus(i18n('errorDeletingCookies'), 'error');
   }
 
   clearAllBtn.innerHTML = originalContent;
