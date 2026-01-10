@@ -13,6 +13,95 @@ let currentDomain = '';
 let currentUrl = '';
 let currentCookies = [];
 
+// Base de datos de cookies conocidas con descripciones
+const cookieDatabase = {
+  // Google Analytics
+  '_ga': { desc: 'Google Analytics', info: 'Identificador único de usuario para estadísticas' },
+  '_gid': { desc: 'Google Analytics', info: 'Identificador de sesión (24h)' },
+  '_gat': { desc: 'Google Analytics', info: 'Limita la tasa de solicitudes' },
+  '_ga_': { desc: 'Google Analytics 4', info: 'Estado de sesión y métricas', partial: true },
+  '__utma': { desc: 'Google Analytics (legacy)', info: 'Identificador de visitante único' },
+  '__utmb': { desc: 'Google Analytics (legacy)', info: 'Sesión actual del usuario' },
+  '__utmc': { desc: 'Google Analytics (legacy)', info: 'Interoperabilidad con urchin.js' },
+  '__utmz': { desc: 'Google Analytics (legacy)', info: 'Fuente de tráfico y navegación' },
+  
+  // Facebook
+  '_fbp': { desc: 'Facebook Pixel', info: 'Seguimiento de conversiones y anuncios' },
+  '_fbc': { desc: 'Facebook Click ID', info: 'Atribución de clics en anuncios' },
+  'fr': { desc: 'Facebook', info: 'Publicidad y seguimiento entre sitios' },
+  
+  // Advertising & Tracking
+  '_gcl_au': { desc: 'Google Ads', info: 'Conversión de enlaces de anuncios' },
+  'IDE': { desc: 'Google DoubleClick', info: 'Publicidad personalizada' },
+  'NID': { desc: 'Google', info: 'Preferencias y publicidad' },
+  '__gads': { desc: 'Google AdSense', info: 'Medición de interacción con anuncios' },
+  '_uetsid': { desc: 'Microsoft Bing Ads', info: 'Seguimiento de sesión' },
+  '_uetvid': { desc: 'Microsoft Bing Ads', info: 'Seguimiento entre sesiones' },
+  
+  // Session & Auth
+  'session': { desc: 'Sesión', info: 'Datos de tu sesión actual' },
+  'sessionid': { desc: 'Sesión', info: 'Identificador de sesión' },
+  'session_id': { desc: 'Sesión', info: 'Identificador de sesión' },
+  'PHPSESSID': { desc: 'Sesión PHP', info: 'Identificador de sesión del servidor' },
+  'JSESSIONID': { desc: 'Sesión Java', info: 'Identificador de sesión del servidor' },
+  'ASP.NET_SessionId': { desc: 'Sesión .NET', info: 'Identificador de sesión del servidor' },
+  'connect.sid': { desc: 'Sesión Node.js', info: 'Identificador de sesión Express' },
+  'auth': { desc: 'Autenticación', info: 'Estado de inicio de sesión' },
+  'auth_token': { desc: 'Autenticación', info: 'Token de acceso' },
+  'access_token': { desc: 'Autenticación', info: 'Token de acceso OAuth' },
+  'refresh_token': { desc: 'Autenticación', info: 'Token para renovar sesión' },
+  'token': { desc: 'Autenticación', info: 'Token de acceso' },
+  'jwt': { desc: 'Autenticación JWT', info: 'JSON Web Token' },
+  'remember_me': { desc: 'Autenticación', info: 'Mantener sesión iniciada' },
+  'logged_in': { desc: 'Autenticación', info: 'Estado de login' },
+  
+  // Preferences
+  'lang': { desc: 'Preferencia', info: 'Idioma seleccionado' },
+  'language': { desc: 'Preferencia', info: 'Idioma seleccionado' },
+  'locale': { desc: 'Preferencia', info: 'Configuración regional' },
+  'theme': { desc: 'Preferencia', info: 'Tema visual (claro/oscuro)' },
+  'dark_mode': { desc: 'Preferencia', info: 'Modo oscuro activado' },
+  'timezone': { desc: 'Preferencia', info: 'Zona horaria del usuario' },
+  'currency': { desc: 'Preferencia', info: 'Moneda seleccionada' },
+  
+  // Consent & Privacy
+  'cookieconsent': { desc: 'Consentimiento', info: 'Aceptación de cookies' },
+  'cookie_consent': { desc: 'Consentimiento', info: 'Aceptación de cookies' },
+  'gdpr': { desc: 'Consentimiento GDPR', info: 'Preferencias de privacidad' },
+  'euconsent': { desc: 'Consentimiento EU', info: 'Preferencias TCF' },
+  'OptanonConsent': { desc: 'OneTrust', info: 'Preferencias de cookies' },
+  'CookieConsent': { desc: 'Consentimiento', info: 'Preferencias de cookies' },
+  
+  // E-commerce
+  'cart': { desc: 'Carrito', info: 'Productos en tu carrito' },
+  'cart_id': { desc: 'Carrito', info: 'Identificador del carrito' },
+  'wishlist': { desc: 'Lista de deseos', info: 'Productos guardados' },
+  
+  // Cloudflare
+  '__cf_bm': { desc: 'Cloudflare', info: 'Protección contra bots' },
+  'cf_clearance': { desc: 'Cloudflare', info: 'Verificación de seguridad completada' },
+  '__cflb': { desc: 'Cloudflare', info: 'Balance de carga' },
+  
+  // Other common
+  'csrf': { desc: 'Seguridad', info: 'Protección contra ataques CSRF' },
+  'csrf_token': { desc: 'Seguridad', info: 'Token anti-falsificación' },
+  '_csrf': { desc: 'Seguridad', info: 'Token anti-falsificación' },
+  'XSRF-TOKEN': { desc: 'Seguridad', info: 'Token anti-falsificación' },
+  'ajs_anonymous_id': { desc: 'Segment', info: 'Identificador anónimo de analytics' },
+  'ajs_user_id': { desc: 'Segment', info: 'Identificador de usuario' },
+  '_hjid': { desc: 'Hotjar', info: 'Identificador único de usuario' },
+  '_hjSessionUser': { desc: 'Hotjar', info: 'Datos de sesión', partial: true },
+  'intercom-id': { desc: 'Intercom', info: 'Identificador de chat', partial: true },
+  'mp_': { desc: 'Mixpanel', info: 'Analytics de producto', partial: true },
+  'amplitude_id': { desc: 'Amplitude', info: 'Analytics de producto', partial: true },
+  '__stripe': { desc: 'Stripe', info: 'Prevención de fraude en pagos', partial: true },
+  'crisp-client': { desc: 'Crisp Chat', info: 'Identificador de chat', partial: true },
+  'hubspotutk': { desc: 'HubSpot', info: 'Seguimiento de visitantes' },
+  '__hssc': { desc: 'HubSpot', info: 'Seguimiento de sesión' },
+  '__hssrc': { desc: 'HubSpot', info: 'Nueva sesión iniciada' },
+  '__hstc': { desc: 'HubSpot', info: 'Seguimiento principal' },
+};
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', init);
 
@@ -51,6 +140,77 @@ function isValidUrl(url) {
   return url && (url.startsWith('http://') || url.startsWith('https://'));
 }
 
+// Obtener información de la cookie
+function getCookieInfo(cookieName) {
+  // Buscar coincidencia exacta
+  if (cookieDatabase[cookieName]) {
+    return cookieDatabase[cookieName];
+  }
+  
+  // Buscar coincidencias parciales (para cookies con prefijos)
+  const lowerName = cookieName.toLowerCase();
+  for (const [key, value] of Object.entries(cookieDatabase)) {
+    if (value.partial && lowerName.startsWith(key.toLowerCase())) {
+      return value;
+    }
+  }
+  
+  // Inferir tipo basado en patrones comunes
+  if (lowerName.includes('session') || lowerName.includes('sess')) {
+    return { desc: 'Sesión', info: 'Datos de sesión del sitio' };
+  }
+  if (lowerName.includes('auth') || lowerName.includes('login') || lowerName.includes('token')) {
+    return { desc: 'Autenticación', info: 'Datos de inicio de sesión' };
+  }
+  if (lowerName.includes('cart') || lowerName.includes('basket')) {
+    return { desc: 'Carrito', info: 'Datos de compra' };
+  }
+  if (lowerName.includes('consent') || lowerName.includes('gdpr') || lowerName.includes('cookie')) {
+    return { desc: 'Consentimiento', info: 'Preferencias de privacidad' };
+  }
+  if (lowerName.includes('lang') || lowerName.includes('locale') || lowerName.includes('i18n')) {
+    return { desc: 'Preferencia', info: 'Configuración de idioma' };
+  }
+  if (lowerName.includes('theme') || lowerName.includes('dark') || lowerName.includes('mode')) {
+    return { desc: 'Preferencia', info: 'Configuración visual' };
+  }
+  if (lowerName.includes('csrf') || lowerName.includes('xsrf')) {
+    return { desc: 'Seguridad', info: 'Protección anti-falsificación' };
+  }
+  if (lowerName.includes('track') || lowerName.includes('analytics') || lowerName.includes('_ga')) {
+    return { desc: 'Analytics', info: 'Seguimiento de uso' };
+  }
+  if (lowerName.includes('ad') || lowerName.includes('promo') || lowerName.includes('campaign')) {
+    return { desc: 'Publicidad', info: 'Seguimiento de anuncios' };
+  }
+  if (lowerName.startsWith('_') || lowerName.startsWith('__')) {
+    return { desc: 'Técnica', info: 'Cookie del sistema' };
+  }
+  
+  return null;
+}
+
+// Formatear fecha de expiración
+function formatExpiry(cookie) {
+  if (cookie.session) {
+    return 'Sesión';
+  }
+  if (cookie.expirationDate) {
+    const date = new Date(cookie.expirationDate * 1000);
+    const now = new Date();
+    const diffDays = Math.ceil((date - now) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return 'Expirada';
+    if (diffDays === 0) return 'Hoy';
+    if (diffDays === 1) return 'Mañana';
+    if (diffDays < 7) return `${diffDays} días`;
+    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} sem`;
+    if (diffDays < 365) return `${Math.ceil(diffDays / 30)} meses`;
+    return `${Math.ceil(diffDays / 365)} años`;
+  }
+  return '—';
+}
+
 // Cargar y mostrar cookies
 async function loadCookies() {
   try {
@@ -84,15 +244,25 @@ function renderCookiesList() {
     cookieItem.className = 'cookie-item';
     cookieItem.dataset.index = index;
     
-    // Truncar valor si es muy largo
-    const displayValue = cookie.value.length > 40 
-      ? cookie.value.substring(0, 40) + '...' 
-      : cookie.value || '(vacío)';
+    const cookieInfo = getCookieInfo(cookie.name);
+    const expiry = formatExpiry(cookie);
+    
+    // Tags de la cookie
+    const tags = [];
+    if (cookie.secure) tags.push('🔒');
+    if (cookie.httpOnly) tags.push('HTTP');
     
     cookieItem.innerHTML = `
       <div class="cookie-info">
-        <span class="cookie-name" title="${escapeHtml(cookie.name)}">${escapeHtml(cookie.name)}</span>
-        <span class="cookie-value" title="${escapeHtml(cookie.value)}">${escapeHtml(displayValue)}</span>
+        <div class="cookie-header">
+          <span class="cookie-name" title="${escapeHtml(cookie.name)}">${escapeHtml(cookie.name)}</span>
+          ${cookieInfo ? `<span class="cookie-type">${cookieInfo.desc}</span>` : ''}
+        </div>
+        <span class="cookie-description">${cookieInfo ? cookieInfo.info : 'Cookie del sitio web'}</span>
+        <div class="cookie-meta">
+          <span class="cookie-expiry" title="Expiración">${expiry}</span>
+          ${tags.length > 0 ? `<span class="cookie-tags">${tags.join(' ')}</span>` : ''}
+        </div>
       </div>
       <button class="cookie-delete" title="Eliminar cookie" data-name="${escapeHtml(cookie.name)}" data-domain="${escapeHtml(cookie.domain)}" data-path="${escapeHtml(cookie.path)}" data-secure="${cookie.secure}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
